@@ -6,7 +6,7 @@ const PREFIX = '/currency-rates';
 
 enum ROUTES {
   CURRENT = '/current',
-  TEST = '/test',
+  ROOT = '/',
   DATE = '/date',
   DATES = '/dates',
 }
@@ -16,12 +16,12 @@ const currentRoutes = async (app: FastifyInstance) => {
 };
 
 const testRoutes = async (app: FastifyInstance) => {
-  app.get(ROUTES.TEST, (_, reply) => {
+  app.get(ROUTES.ROOT, (_, reply) => {
     reply.send({ message: `Server is running on port ${config.PORT}` });
   });
 };
 
 export const routes = async (app: FastifyInstance) => {
   app.register(currentRoutes, { prefix: PREFIX});
-  app.register(testRoutes, { prefix: PREFIX});
+  app.register(testRoutes);
 };
