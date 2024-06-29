@@ -1,8 +1,27 @@
-import express from 'express';
-const router = express.Router();
+import { FastifyInstance } from 'fastify';
+import { config } from '../config';
+import { currencyRateController } from '../controllers/CurrencyRateController';
 
-router.get('/current', (req, res) => {
-  return res.status(200).json({ message: 'current' });
-});
+const PREFIX = '/currency-rates';
 
-export { router };
+enum ROUTES {
+  CURRENT = '/current',
+  TEST = '/test',
+  DATE = '/date',
+  DATES = '/dates',
+}
+
+const currentRoutes = async (app: FastifyInstance) => {
+  app.get(ROUTES.CURRENT, (req, res) => currencyRateController.getCurrent(req, res));
+};
+
+const testRoutes = async (app: FastifyInstance) => {
+  app.get(ROUTES.TEST, (_, reply) => {
+    reply.send({ message: `Server is running on port ${config.PORT}` });
+  });
+};
+
+export const routes = async (app: FastifyInstance) => {
+  app.register(currentRoutes, { prefix: PREFIX});
+  app.register(testRoutes, { prefix: PREFIX});
+};
