@@ -45,6 +45,7 @@ type UpdatedCurr = {
 };
 
 export class CBRFRateApiClient {
+  // TODO: Move converter to somewhere else
   convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;
     const children = myJson.ValCurs.children;
