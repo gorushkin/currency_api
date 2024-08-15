@@ -22,7 +22,7 @@ const currencies = [
   Currency.TRY,
 ];
 
-export class CurrencyRateApiClient {
+export class CoingateRateApiClient {
   async fetchCurrentRate(currency: Currency) {
     try {
       const { data } = await axios(getApiUrl(currency));

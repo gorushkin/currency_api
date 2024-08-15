@@ -1,13 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import CurrencyRateService from '../services/CurrencyRateService';
+import CoingateRateService from '../services/CoingateRateService';
 
 const DEFAULT_MESSAGE = 'Is not implemented yet';
 
-class CurrencyRateController {
-  private currencyRateService: CurrencyRateService;
+class CoingateRateController {
+  private currencyRateService: CoingateRateService;
 
   constructor() {
-    this.currencyRateService = new CurrencyRateService();
+    this.currencyRateService = new CoingateRateService();
   }
 
   async getCurrent(_: FastifyRequest, res: FastifyReply) {
@@ -33,4 +33,4 @@ class CurrencyRateController {
   }
 }
 
-export const currencyRateController = new CurrencyRateController();
+export const coingateRateController = new CoingateRateController();

@@ -1,10 +1,10 @@
-import { CurrencyRateApiClient } from "../frameworks-drivers/http/CurrencyRateApiClient";
+import { CoingateRateApiClient } from '../frameworks-drivers/http/CoingateRateApiClient';
 
-class CurrencyRateRepository {
-  private apiClient: CurrencyRateApiClient;
+class CoingateRateRepository {
+  private apiClient: CoingateRateApiClient;
 
   constructor() {
-    this.apiClient = new CurrencyRateApiClient();
+    this.apiClient = new CoingateRateApiClient();
   }
 
   async getCurrentRates() {
@@ -20,4 +20,4 @@ class CurrencyRateRepository {
   }
 }
 
-export default CurrencyRateRepository;
+export default CoingateRateRepository;
