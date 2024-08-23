@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { convertXML } from 'simple-xml-to-json';
-import { getCurrentDate } from '../../utils';
+import { getCurrentDate } from '../utils';
 
 const URL = 'https://www.cbr.ru/scripts/XML_daily.asp?date_req=';
 

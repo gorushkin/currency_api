@@ -1,21 +1,13 @@
-import { CBRFRateRepository } from '../repositories/CBRFRateRepository';
+import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 
 export class CBRFRateService {
-  private CBRFRateRepository: CBRFRateRepository;
+  private apiClient: CBRFRateApiClient;
 
   constructor() {
-    this.CBRFRateRepository = new CBRFRateRepository();
+    this.apiClient = new CBRFRateApiClient();
   }
 
   async getCurrentRates() {
-    return await this.CBRFRateRepository.getCurrentRates();
-  }
-
-  async getRatesByDate(date: string) {
-    return await this.CBRFRateRepository.getRatesByDate(date);
-  }
-
-  async getRatesByDates(dates: string[]) {
-    return await this.CBRFRateRepository.getRatesByDates(dates);
+    return await this.apiClient.fetchTodayRates();
   }
 }

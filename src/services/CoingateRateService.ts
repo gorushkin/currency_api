@@ -1,22 +1,14 @@
-import CoingateRateRepository from '../repositories/CoingateRateRepository';
+import { CoingateRateApiClient } from '../api/CoingateRateApiClient';
 
 class CoingateRateService {
-  private coingateRateRepository: CoingateRateRepository;
+  private coingateRateApiClient: CoingateRateApiClient;
 
   constructor() {
-    this.coingateRateRepository = new CoingateRateRepository();
+    this.coingateRateApiClient = new CoingateRateApiClient();
   }
 
   async getCurrentRates() {
-    return await this.coingateRateRepository.getCurrentRates();
-  }
-
-  async getRatesByDate(date: string) {
-    return await this.coingateRateRepository.getRatesByDate(date);
-  }
-
-  async getRatesByDates(dates: string[]) {
-    return await this.coingateRateRepository.getRatesByDates(dates);
+    return await this.coingateRateApiClient.fetchCurrentRates();
   }
 }
 
