@@ -23,18 +23,27 @@ enum ROUTES {
 const coingatePrefix = getPrefix(PREFIX, SOURCES.COINGATE as string);
 const cbrfPrefix = getPrefix(PREFIX, SOURCES.CBRF as string);
 
-const coingateRoutes = async (app: FastifyInstance) =>
+const coingateRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.CURRENT, (req, res) =>
     coingateRateController.getCurrent(req, res),
   );
+};
 
-const cbRoutes = async (app: FastifyInstance) =>
-  app.get(ROUTES.CURRENT, (req, res) => cbrfRateController.getCurrent(req, res));
+const cbRoutes = async (app: FastifyInstance) => {
+  app.get(ROUTES.CURRENT, (req, res) =>
+    cbrfRateController.getCurrent(req, res),
+  );
+};
 
-const testRoutes = async (app: FastifyInstance) =>
+const testRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.ROOT, (_, reply) => {
     reply.send({ message: `Server is running on port ${config.PORT}` });
   });
+
+  app.get(ROUTES.TODAY, (_, reply) => {
+    reply.send({ message: new Date().toDateString() });
+  });
+};
 
 export const routes = async (app: FastifyInstance) => {
   app.register(coingateRoutes, {

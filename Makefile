@@ -8,7 +8,7 @@ stop:
 
 create:
 	docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
-	docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} --network ${NETWORK_NAME} ${IMAGE_NAME}
+	docker run -d -p ${HOST_PORT}:${PORT} --name ${CONTAINER_NAME} --network ${NETWORK_NAME} ${IMAGE_NAME}
 
 remove:
 	docker rm -f ${CONTAINER_NAME}
