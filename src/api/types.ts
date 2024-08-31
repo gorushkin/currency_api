@@ -11,14 +11,14 @@ type Children = {
 
 type Valute = {
   ID: string;
-  children: Currency[];
+  children: CBRFCurrency[];
 };
 
 type StringContent = {
   content: string;
 };
 
-type Currency = {
+type CBRFCurrency = {
   NumCode?: StringContent;
   CharCode?: StringContent;
   Nominal?: StringContent;
@@ -27,11 +27,18 @@ type Currency = {
   VunitRate?: StringContent;
 };
 
-export type UpdatedCurr = {
-  numCode: string;
-  charCode: string;
-  nominal: string;
+export type CurrencyType = {
   name: string;
-  value: string;
-  vunitRate: string;
+  code: string;
+  rate: number;
+  baseCurrency: string;
 };
+
+export enum Currency {
+  EUR = 'eur',
+  USD = 'usd',
+  NZD = 'nzd',
+  TRY = 'try',
+  CNY = 'cny',
+  RUB = 'rub',
+}

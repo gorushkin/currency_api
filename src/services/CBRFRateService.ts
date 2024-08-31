@@ -1,6 +1,6 @@
 import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
-import { ParsedData, UpdatedCurr } from '../api/types';
+import { ParsedData, CurrencyType } from '../api/types';
 
 export class CBRFRateService {
   private apiClient: CBRFRateApiClient;
@@ -13,13 +13,11 @@ export class CBRFRateService {
     const myJson = convertXML(data) as unknown as ParsedData;
     const children = myJson.ValCurs.children;
 
-    const convertedData: UpdatedCurr[] = children.map((item) => ({
-      charCode: item.Valute.children[1].CharCode?.content || '',
-      name: item.Valute.children[3].Name?.content || '',
-      nominal: item.Valute.children[2].Nominal?.content || '',
-      numCode: item.Valute.children[0].NumCode?.content || '',
-      value: item.Valute.children[4].Value?.content || '',
-      vunitRate: item.Valute.children[5].VunitRate?.content || '',
+    const convertedData: CurrencyType[] = children.map((item) => ({
+      name: item.Valute.children[1].CharCode?.content || '',
+      code: item.Valute.children[0].NumCode?.content || '',
+      rate: Number(item.Valute.children[3].Value?.content) || 0,
+      baseCurrency: 'rub',
     }));
 
     return convertedData;

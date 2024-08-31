@@ -1,44 +1,29 @@
 import axios from 'axios';
-
-enum Currency {
-  EUR = 'EUR',
-  USD = 'USD',
-  NZD = 'NZD',
-  TRY = 'TRY',
-  CNY = 'CNY',
-  RUB = 'RUB',
-}
+import { Currency, CurrencyType } from './types';
 
 export type Rates = Record<Currency, string>;
 
 const getApiUrl = (currency: Currency, baseCurrency: Currency = Currency.RUB) =>
   `https://api.coingate.com/v2/rates/merchant/${currency}/${baseCurrency}`;
 
-const currencies = [
-  Currency.USD,
-  Currency.EUR,
-  Currency.CNY,
-  Currency.NZD,
-  Currency.TRY,
-];
-
 export class CoingateRateApiClient {
-  async fetchCurrentRate(currency: Currency) {
+  async fetchCurrentRate(name: Currency): Promise<CurrencyType> {
     try {
-      const { data } = await axios(getApiUrl(currency));
-      return data;
+      const { data } = await axios<string | undefined>(getApiUrl(name));
+
+      return {
+        rate: Number(data) ?? 0,
+        name,
+        baseCurrency: Currency.RUB,
+        code: '',
+      };
     } catch (error) {
-      return 'null';
+      return {
+        rate: 0,
+        baseCurrency: Currency.RUB,
+        code: '',
+        name,
+      };
     }
-  }
-
-  async fetchCurrentRates() {
-    const promises = currencies.map(async (currency) => {
-      const rate = await this.fetchCurrentRate(currency);
-
-      return { rate, currency };
-    });
-
-    return await Promise.all(promises);
   }
 }
