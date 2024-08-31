@@ -35,6 +35,7 @@ jobs:
 
 
   deploy:
+    needs: update-container
     runs-on: ubuntu-latest
 
     steps:
