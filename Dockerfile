@@ -5,7 +5,6 @@ WORKDIR /app
 COPY package.json ./
 COPY tsconfig.json ./
 RUN npm install
-COPY .env ./.env
 COPY src ./src
 
 RUN npm run build
