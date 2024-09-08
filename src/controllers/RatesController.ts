@@ -1,15 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CBRFRateService } from '../services/CBRFRateService';
-import CoingateRateService from '../services/CoingateRateService';
+import { CoingateRateService } from '../services/CoingateRateService';
+import { OERRateService } from '../services/OERRateService';
 
 class RatesController {
-  private cbrfRateService: CBRFRateService;
-  private coingateRateService: CoingateRateService;
-
-  constructor() {
-    this.cbrfRateService = new CBRFRateService();
-    this.coingateRateService = new CoingateRateService();
-  }
+  private cbrfRateService = new CBRFRateService();
+  private coingateRateService = new CoingateRateService();
+  private OERRateService = new OERRateService();
 
   async getCBRFRates(_: FastifyRequest, res: FastifyReply) {
     const rates = await this.cbrfRateService.getCurrentRates();
@@ -19,6 +16,12 @@ class RatesController {
 
   async getCoingateRates(_: FastifyRequest, res: FastifyReply) {
     const rates = await this.coingateRateService.getCurrentRates();
+
+    res.send(rates);
+  }
+
+  async getOERRates(_: FastifyRequest, res: FastifyReply) {
+    const rates = await this.OERRateService.getCurrentRates();
 
     res.send(rates);
   }

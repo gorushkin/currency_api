@@ -1,20 +1,23 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { getCurrentDate } from '../utils';
-
-const URL = 'https://www.cbr.ru/scripts/XML_daily.asp?date_req=';
-
-const getApiUrl = (date: string) => `${URL}${date}`;
+import { Response } from './types';
 
 export class CBRFRateApiClient {
-  async fetchTodayRates(): Promise<string | null> {
+  private URL = 'https://www.cbr.ru/scripts/XML_daily.asp?date_req=';
+
+  protected getApiUrl = (date: string) => `${this.URL}${date}`;
+
+  async fetchTodayRates(): Promise<Response<string>> {
     const today = getCurrentDate();
+    const url = this.getApiUrl(today);
 
     try {
-      const res = await axios<string>(getApiUrl(today));
+      const {data} = await axios<string>(url);
 
-      return res.data
+      return { ok: true, data };
     } catch (error) {
-      return null;
+      console.error('Error fetching CBRF rate', error);
+      return { ok: false, error: 'Something went wrong' };
     }
   }
 }

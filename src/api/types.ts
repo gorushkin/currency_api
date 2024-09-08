@@ -11,34 +11,45 @@ type Children = {
 
 type Valute = {
   ID: string;
-  children: CBRFCurrency[];
+  children: CurrencyArray;
 };
 
 type StringContent = {
   content: string;
 };
 
-type CBRFCurrency = {
-  NumCode?: StringContent;
-  CharCode?: StringContent;
-  Nominal?: StringContent;
-  Name?: StringContent;
-  Value?: StringContent;
-  VunitRate?: StringContent;
+export type CurrencyArray = [
+  { NumCode: StringContent },
+  { CharCode: StringContent },
+  { Nominal: StringContent },
+  { Name: StringContent },
+  { Value: StringContent },
+  { VunitRate: StringContent },
+];
+
+export type CBRFCurrency = {
+  NumCode: StringContent;
+  CharCode: StringContent;
+  Nominal: StringContent;
+  Name: StringContent;
+  Value: StringContent;
+  VunitRate: StringContent;
 };
 
-export type CurrencyType = {
-  name: string;
-  code: string;
-  rate: number;
-  baseCurrency: string;
-};
+export type Rates = Record<string, number>;
 
 export enum Currency {
-  EUR = 'eur',
-  USD = 'usd',
-  NZD = 'nzd',
-  TRY = 'try',
-  CNY = 'cny',
-  RUB = 'rub',
+  EUR = 'EUR',
+  USD = 'USD',
+  NZD = 'NZD',
+  TRY = 'TRY',
+  CNY = 'CNY',
+  RUB = 'RUB',
 }
+
+export type RatesInfo = {
+  rates: Rates;
+  base: string;
+};
+
+export type Response<T> = { ok: true; data: T } | { ok: false; error: string };

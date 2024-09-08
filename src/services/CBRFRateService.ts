@@ -1,35 +1,53 @@
 import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
-import { ParsedData, CurrencyType } from '../api/types';
+import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
+
+type Qwe = {
+  NumCode: string;
+  CharCode: string;
+  Nominal: string;
+  Name: string;
+  Value: string;
+  VunitRate: string;
+};
 
 export class CBRFRateService {
-  private apiClient: CBRFRateApiClient;
-
-  constructor() {
-    this.apiClient = new CBRFRateApiClient();
-  }
+  private apiClient = new CBRFRateApiClient();
 
   convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;
-    const children = myJson.ValCurs.children;
 
-    const convertedData: CurrencyType[] = children.map((item) => ({
-      name: item.Valute.children[1].CharCode?.content || '',
-      code: item.Valute.children[0].NumCode?.content || '',
-      rate: Number(item.Valute.children[3].Value?.content) || 0,
-      baseCurrency: 'rub',
-    }));
+    const valCursChildren = myJson.ValCurs.children;
+
+    const convertedData: Rates = valCursChildren.reduce((acc, children) => {
+      const valuteChildren = children.Valute.children;
+
+      const params = valuteChildren.reduce<CBRFCurrency>((acc, item) => {
+        const key = Object.keys(item)[0] as keyof CBRFCurrency;
+        acc[key] = (item as any)[key] as CBRFCurrency[keyof CBRFCurrency];
+        return acc;
+      }, {} as CBRFCurrency);
+
+      return {
+        ...acc,
+        [params.CharCode.content]: parseFloat(
+          params.Value.content.replace(',', '.'),
+        ),
+      };
+    }, {});
 
     return convertedData;
   };
 
-  async getCurrentRates() {
-    const data = await this.apiClient.fetchTodayRates();
+  async getCurrentRates(): Promise<RatesInfo> {
+    const response = await this.apiClient.fetchTodayRates();
 
-    if (!data) {
-      throw new Error('Data is empty');
+    if (!response.ok) {
+      throw new Error(response.error);
     }
 
-    return this.convertXML(data);
+    const rates = this.convertXML(response.data);
+
+    return { base: 'RUB', rates };
   }
 }

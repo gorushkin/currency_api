@@ -1,22 +1,21 @@
 import { CoingateRateApiClient } from '../api/CoingateRateApiClient';
 import { Currency } from '../api/types';
 
-const currencies: Currency[] = Object.values(Currency);
+export class CoingateRateService {
+  private currencies: Currency[] = Object.values(Currency);
 
-class CoingateRateService {
-  private coingateRateApiClient: CoingateRateApiClient;
+  private coingateRateApiClient = new CoingateRateApiClient();
 
-  constructor() {
-    this.coingateRateApiClient = new CoingateRateApiClient();
-  }
-
-  getCurrentRates() {
-    const promises = currencies.map((item) =>
+  async getCurrentRates() {
+    const promises = this.currencies.map((item) =>
       this.coingateRateApiClient.fetchCurrentRate(item),
     );
 
-    return Promise.all(promises);
+    const rates = (await Promise.all(promises)).reduce(
+      (acc, item) => ({ ...acc, ...item }),
+      {},
+    );
+
+    return { base: 'RUB', rates };
   }
 }
-
-export default CoingateRateService;

@@ -5,12 +5,18 @@ http://localhost:4500/currency-rates/test
 
 ### Get coingate current
 
-http://localhost:4500/currency-rates/coingate/current
+http://localhost:4500/currency-rates/coingate
 
 
 ### Get cbrf current
 
-http://localhost:4500/currency-rates/cbrf/current
+http://localhost:4500/currency-rates/cbrf
+
+
+
+### Get OpenExchangeRates current
+
+http://localhost:4500/currency-rates/oer
 
 
 ### testRoutes

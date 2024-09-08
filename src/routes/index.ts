@@ -8,6 +8,7 @@ enum ROUTES {
   ROOT = '/',
   CBRF = '/cbrf',
   COINGATE = '/coingate',
+  OER = '/oer',
 }
 
 const ratesRoutes = async (app: FastifyInstance) => {
@@ -15,6 +16,7 @@ const ratesRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.COINGATE, (req, res) =>
     ratesController.getCoingateRates(req, res),
   );
+  app.get(ROUTES.OER, (req, res) => ratesController.getOERRates(req, res));
 };
 
 const testRoutes = async (app: FastifyInstance) => {
