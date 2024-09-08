@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Currency, Rates, Response } from './types';
 import { config } from '../config';
+import { DataCache } from '../utils/cacheRequest';
 
 type OERRates = Record<Currency, number>;
 
@@ -17,14 +18,16 @@ export class OERApiClient {
   APP_ID = config.APP_ID;
   BASE_CURRENCY = Currency.USD;
 
+  private dataCache = new DataCache<OERResponse>(axios);
+
   getApiUrl = () =>
     `${this.API_BASE}latest.json?app_id=${this.APP_ID}&base=${this.BASE_CURRENCY}&callback`;
 
   async fetchCurrentRate(): Promise<Response<Rates>> {
     try {
-      const { data } = await axios<OERResponse>(this.getApiUrl());
+      const rates = await this.dataCache.get(this.getApiUrl());
 
-      return { ok: true, data: data.rates };
+      return { ok: true, data: rates.rates };
     } catch (error) {
       console.error('Error fetching OER rate', error);
       return { ok: false, error: 'Something went wrong' };
