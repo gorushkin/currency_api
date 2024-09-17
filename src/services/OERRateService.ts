@@ -1,5 +1,6 @@
 import { OERApiClient } from '../api/OERApiClient';
 import { Rates, RatesInfo } from '../api/types';
+import { error } from '../utils';
 
 export class OERRateService {
   private OERApiClient = new OERApiClient();
@@ -15,7 +16,7 @@ export class OERRateService {
     const response = await this.OERApiClient.fetchCurrentRate();
 
     if (!response.ok) {
-      throw new Error(response.error);
+      throw new error.APIError(response.error);
     }
 
     const rubRate = response.data['RUB'];

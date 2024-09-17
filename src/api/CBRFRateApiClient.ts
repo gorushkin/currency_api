@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getCurrentDate } from '../utils';
 import { Response } from './types';
 
 export class CBRFRateApiClient {

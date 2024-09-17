@@ -2,6 +2,7 @@ export type ParsedData = {
   ValCurs: {
     Date: string;
     children: Children[];
+    content?: string;
   };
 };
 

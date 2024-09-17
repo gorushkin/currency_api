@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Currency, Rates, Response } from './types';
 import { config } from '../config';
-import { DataCache } from '../utils/cacheRequest';
+import { DataCache } from '../utils';
 
 type OERRates = Record<Currency, number>;
 

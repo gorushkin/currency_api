@@ -3,12 +3,24 @@ import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
 import { Response } from '../api/types';
 import { getCurrentDate } from '../utils';
+import { getCBRFDate, validateDate } from '../utils';
+import { error } from '../utils';
+
+const ERROR_RESPONSE = 'Error in parameters';
 
 export class CBRFRateService {
   private apiClient = new CBRFRateApiClient();
 
   convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;
+
+    if (
+      !myJson.ValCurs ||
+      !myJson.ValCurs.children ||
+      myJson.ValCurs?.content === ERROR_RESPONSE
+    ) {
+      throw new error.ValidationError('Invalid data format');
+    }
 
     const valCursChildren = myJson.ValCurs.children;
 
@@ -32,9 +44,20 @@ export class CBRFRateService {
     return convertedData;
   };
 
-  async getRates(response: Response<string>, date: string): Promise<RatesInfo> {
+  private validateDate(dateString: string) {
+    const isValidDate = validateDate(dateString);
+
+    if (!isValidDate) {
+      throw new error.ValidationError('Invalid date format: use YYYY-MM-DD');
+    }
+  }
+
+  private async getRates(
+    response: Response<string>,
+    date: string,
+  ): Promise<RatesInfo> {
     if (!response.ok) {
-      throw new Error(response.error);
+      throw new error.APIError(response.error);
     }
 
     const rates = this.convertXML(response.data);
@@ -44,13 +67,18 @@ export class CBRFRateService {
 
   async getCurrentRates(): Promise<RatesInfo> {
     const date = getCurrentDate();
-    const response = await this.apiClient.fetchRates(date);
+    const cbrfDate = getCBRFDate(getCurrentDate());
+    const response = await this.apiClient.fetchRates(cbrfDate);
 
     return this.getRates(response, date);
   }
 
   async getRatesByDate(date: string): Promise<RatesInfo> {
-    const response = await this.apiClient.fetchRates(date);
+    this.validateDate(date);
+
+    const cbrfDate = getCBRFDate(date);
+
+    const response = await this.apiClient.fetchRates(cbrfDate);
 
     return this.getRates(response, date);
   }
