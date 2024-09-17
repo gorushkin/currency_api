@@ -1,15 +1,8 @@
 import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
-
-type Qwe = {
-  NumCode: string;
-  CharCode: string;
-  Nominal: string;
-  Name: string;
-  Value: string;
-  VunitRate: string;
-};
+import { Response } from '../api/types';
+import { getCurrentDate } from '../utils';
 
 export class CBRFRateService {
   private apiClient = new CBRFRateApiClient();
@@ -39,15 +32,26 @@ export class CBRFRateService {
     return convertedData;
   };
 
-  async getCurrentRates(): Promise<RatesInfo> {
-    const response = await this.apiClient.fetchTodayRates();
-
+  async getRates(response: Response<string>, date: string): Promise<RatesInfo> {
     if (!response.ok) {
       throw new Error(response.error);
     }
 
     const rates = this.convertXML(response.data);
 
-    return { base: 'RUB', rates };
+    return { base: 'RUB', rates, date };
+  }
+
+  async getCurrentRates(): Promise<RatesInfo> {
+    const date = getCurrentDate();
+    const response = await this.apiClient.fetchRates(date);
+
+    return this.getRates(response, date);
+  }
+
+  async getRatesByDate(date: string): Promise<RatesInfo> {
+    const response = await this.apiClient.fetchRates(date);
+
+    return this.getRates(response, date);
   }
 }

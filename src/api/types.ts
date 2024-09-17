@@ -50,6 +50,7 @@ export enum Currency {
 export type RatesInfo = {
   rates: Rates;
   base: string;
+  date: string;
 };
 
 export type Response<T> = { ok: true; data: T } | { ok: false; error: string };

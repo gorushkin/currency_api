@@ -1,6 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { config } from '../config';
-import { ratesController } from '../controllers/RatesController';
+import {
+  ratesController,
+  WithDateRequest,
+} from '../controllers/RatesController';
 
 const PREFIX = '/currency-rates';
 
@@ -12,7 +15,9 @@ enum ROUTES {
 }
 
 const ratesRoutes = async (app: FastifyInstance) => {
-  app.get(ROUTES.CBRF, (req, res) => ratesController.getCBRFRates(req, res));
+  app.get(ROUTES.CBRF, (req, res) =>
+    ratesController.getCBRFRates(req as WithDateRequest, res),
+  );
   app.get(ROUTES.COINGATE, (req, res) =>
     ratesController.getCoingateRates(req, res),
   );

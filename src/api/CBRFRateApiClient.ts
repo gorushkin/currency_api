@@ -7,12 +7,11 @@ export class CBRFRateApiClient {
 
   protected getApiUrl = (date: string) => `${this.URL}${date}`;
 
-  async fetchTodayRates(): Promise<Response<string>> {
-    const today = getCurrentDate();
-    const url = this.getApiUrl(today);
+  async fetchRates(date: string): Promise<Response<string>> {
+    const url = this.getApiUrl(date);
 
     try {
-      const {data} = await axios<string>(url);
+      const { data } = await axios<string>(url);
 
       return { ok: true, data };
     } catch (error) {

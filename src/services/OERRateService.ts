@@ -22,6 +22,6 @@ export class OERRateService {
 
     const rates = this.convertRates(response.data, rubRate);
 
-    return { base: 'RUB', rates };
+    return { base: 'RUB', rates, date: 'no date' };
   }
 }
