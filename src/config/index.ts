@@ -4,5 +4,6 @@ dotenv.config();
 
 const PORT = Number(process.env.PORT) || 4500;
 const APP_ID = process.env.APP_ID;
+const DB_URL = process.env.DB_URL;
 
-export const config = { PORT, APP_ID };
+export const config = { PORT, APP_ID, DB_URL };
