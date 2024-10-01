@@ -28,8 +28,12 @@ class RatesController {
     res.send(rates);
   }
 
-  async getOERRates(_: FastifyRequest, res: FastifyReply) {
-    const rates = await this.OERRateService.getCurrentRates();
+  async getOERRates(req: WithDateRequest, res: FastifyReply) {
+    const date = req.query.date;
+
+    const rates = date
+      ? await this.OERRateService.getRatesByDate(date)
+      : await this.OERRateService.getCurrentRates();
 
     res.send(rates);
   }

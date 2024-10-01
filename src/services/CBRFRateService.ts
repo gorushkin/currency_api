@@ -2,17 +2,18 @@ import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
 import { getCurrentDate } from '../utils';
-import { getCBRFDate, validateDate } from '../utils';
+import { getCBRFDate } from '../utils';
 import { error } from '../utils';
 import { dailyCBRFEntriesService } from '../database';
+import { RateService } from './RateService';
 
 const ERROR_RESPONSE = 'Error in parameters';
 
-export class CBRFRateService {
+export class CBRFRateService extends RateService {
   private apiClient = new CBRFRateApiClient();
-  private dailyCBRFEntriesService = dailyCBRFEntriesService;
+  private db = dailyCBRFEntriesService;
 
-  convertXML = (data: string) => {
+  private convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;
 
     if (
@@ -45,18 +46,7 @@ export class CBRFRateService {
     return convertedData;
   };
 
-  private validateDate(dateString: string) {
-    const isValidDate = validateDate(dateString);
-
-    if (!isValidDate) {
-      throw new error.ValidationError('Invalid date format: use YYYY-MM-DD');
-    }
-  }
-
-  private async getRates(
-    response: { data: string },
-    date: string,
-  ): Promise<RatesInfo> {
+  prepareData(response: { data: string }, date: string): RatesInfo {
     const rates = this.convertXML(response.data);
 
     return { base: 'RUB', rates, date };
@@ -64,20 +54,18 @@ export class CBRFRateService {
 
   async getCurrentRates(): Promise<RatesInfo> {
     const date = getCurrentDate();
-    const cbrfDate = getCBRFDate(getCurrentDate());
-    const response = await this.apiClient.fetchRates(cbrfDate);
 
-    if (!response.ok) {
-      throw new error.APIError(response.error);
-    }
-
-    return this.getRates(response, date);
+    return this.getRates(date);
   }
 
   async getRatesByDate(date: string): Promise<RatesInfo> {
     this.validateDate(date);
 
-    const entry = await this.dailyCBRFEntriesService.getEntry(date);
+    return this.getRates(date);
+  }
+
+  getRates = async (date: string): Promise<RatesInfo> => {
+    const entry = await this.db.getEntry(date);
 
     if (entry) {
       return entry;
@@ -91,10 +79,10 @@ export class CBRFRateService {
       throw new error.APIError(response.error);
     }
 
-    const rates = await this.getRates(response, date);
+    const rates = await this.prepareData(response, date);
 
-    await this.dailyCBRFEntriesService.setEntry(date, rates);
+    await this.db.setEntry(date, rates);
 
     return rates;
-  }
+  };
 }

@@ -3,7 +3,7 @@ import { db } from '../db';
 import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-class DailyEntriesService {
+export class DailyEntriesService {
   private db = db;
   private table: DailyTable;
   constructor(table: DailyTable) {

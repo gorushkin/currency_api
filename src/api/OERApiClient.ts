@@ -14,18 +14,34 @@ type OERResponse = {
 };
 
 export class OERApiClient {
-  API_BASE = 'https://openexchangerates.org/api/';
-  APP_ID = config.APP_ID;
-  BASE_CURRENCY = Currency.USD;
+  private API_BASE = 'https://openexchangerates.org/api/';
+  private APP_ID = config.APP_ID;
+  private BASE_CURRENCY = Currency.USD;
 
   private dataCache = new DataCache<OERResponse>(axios);
 
-  getApiUrl = () =>
-    `${this.API_BASE}latest.json?app_id=${this.APP_ID}&base=${this.BASE_CURRENCY}&callback`;
+  private getApiUrl = (params: string) =>
+    `${this.API_BASE}${params}.json?app_id=${this.APP_ID}&base=${this.BASE_CURRENCY}&callback`;
+
+  private getApiUrlCurrent = () => this.getApiUrl('latest');
+
+  private getApiUrlDate = (date: string) =>
+    this.getApiUrl(`historical/${date}`);
 
   async fetchCurrentRate(): Promise<Response<Rates>> {
     try {
-      const rates = await this.dataCache.get(this.getApiUrl());
+      const rates = await this.dataCache.get(this.getApiUrlCurrent());
+
+      return { ok: true, data: rates.rates };
+    } catch (error) {
+      console.error('Error fetching OER rate', error);
+      return { ok: false, error: 'Something went wrong' };
+    }
+  }
+
+  async fetchDateRate(date: string): Promise<Response<Rates>> {
+    try {
+      const rates = await this.dataCache.get(this.getApiUrlDate(date));
 
       return { ok: true, data: rates.rates };
     } catch (error) {
