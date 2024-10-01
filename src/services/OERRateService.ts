@@ -37,15 +37,12 @@ export class OERRateService extends RateService {
     this.validateDate(date);
 
     const entry = await this.db.getEntry(date);
-    console.log('entry: ', entry);
 
     if (entry) {
-      console.log('exist!!!');
       return entry;
     }
 
     const response = await this.OERApiClient.fetchDateRate(date);
-    console.log('response: ', response);
 
     if (!response.ok) {
       throw new error.APIError(response.error);
