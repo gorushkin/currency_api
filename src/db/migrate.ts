@@ -1,12 +1,16 @@
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { client, db } from './db';
-import { a } from '@electric-sql/pglite/dist/pglite-0lWrV3Ip';
+import { db } from './db';
 
- const applyMigrations = async () => {
-  await migrate(db, {
-    migrationsFolder: './src/db/migrations',
-  });
+const applyMigrations = async () => {
+  try {
+    await migrate(db, {
+      migrationsFolder: './src/db/migrations',
+    });
+
+    console.log('Migrations applied');
+  } catch (error) {
+    console.log('error: ', error);
+  }
 };
-
 
 applyMigrations();

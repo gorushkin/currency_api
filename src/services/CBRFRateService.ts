@@ -1,15 +1,16 @@
 import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
-import { Response } from '../api/types';
 import { getCurrentDate } from '../utils';
 import { getCBRFDate, validateDate } from '../utils';
 import { error } from '../utils';
+import { dailyCBRFEntriesService } from '../database';
 
 const ERROR_RESPONSE = 'Error in parameters';
 
 export class CBRFRateService {
   private apiClient = new CBRFRateApiClient();
+  private dailyCBRFEntriesService = dailyCBRFEntriesService;
 
   convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;
@@ -53,13 +54,9 @@ export class CBRFRateService {
   }
 
   private async getRates(
-    response: Response<string>,
+    response: { data: string },
     date: string,
   ): Promise<RatesInfo> {
-    if (!response.ok) {
-      throw new error.APIError(response.error);
-    }
-
     const rates = this.convertXML(response.data);
 
     return { base: 'RUB', rates, date };
@@ -70,16 +67,34 @@ export class CBRFRateService {
     const cbrfDate = getCBRFDate(getCurrentDate());
     const response = await this.apiClient.fetchRates(cbrfDate);
 
+    if (!response.ok) {
+      throw new error.APIError(response.error);
+    }
+
     return this.getRates(response, date);
   }
 
   async getRatesByDate(date: string): Promise<RatesInfo> {
     this.validateDate(date);
 
+    const entry = await this.dailyCBRFEntriesService.getEntry(date);
+
+    if (entry) {
+      return entry;
+    }
+
     const cbrfDate = getCBRFDate(date);
 
     const response = await this.apiClient.fetchRates(cbrfDate);
 
-    return this.getRates(response, date);
+    if (!response.ok) {
+      throw new error.APIError(response.error);
+    }
+
+    const rates = await this.getRates(response, date);
+
+    await this.dailyCBRFEntriesService.setEntry(date, rates);
+
+    return rates;
   }
 }
