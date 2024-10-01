@@ -15,7 +15,7 @@ http://localhost:4500/currency-rates/cbrf
 
 ### Get cbrf specific date
 
-http://localhost:4500/currency-rates/cbrf?date=2024-10-01
+http://localhost:4500/currency-rates/cbrf?date=2024-04-01
 
 
 
@@ -25,7 +25,7 @@ http://localhost:4500/currency-rates/oer
 
 
 ### Get OpenExchangeRates specific date
-http://localhost:4500/currency-rates/oer?date=2024-09-17
+http://localhost:4500/currency-rates/oer?date=2024-08-17
 
 
 ### testRoutes

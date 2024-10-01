@@ -1,12 +1,14 @@
 import { RatesInfo } from '../api/types';
-import { error, validateDate } from '../utils';
+import { errorUtils, validateDate } from '../utils';
 
 export abstract class RateService {
   validateDate(dateString: string) {
     const isValidDate = validateDate(dateString);
 
     if (!isValidDate) {
-      throw new error.ValidationError('Invalid date format: use YYYY-MM-DD');
+      throw new errorUtils.ValidationError(
+        'Invalid date format: use YYYY-MM-DD',
+      );
     }
   }
 
@@ -14,5 +16,5 @@ export abstract class RateService {
 
   abstract getRatesByDate(date: string): Promise<RatesInfo>;
 
-  abstract prepareData(response: { data: unknown }, date: string): RatesInfo;
+  abstract prepareData(data: unknown, date: string): RatesInfo;
 }

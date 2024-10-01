@@ -3,7 +3,7 @@ import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
 import { getCurrentDate } from '../utils';
 import { getCBRFDate } from '../utils';
-import { error } from '../utils';
+import { errorUtils } from '../utils';
 import { dailyCBRFEntriesService } from '../database';
 import { RateService } from './RateService';
 
@@ -21,7 +21,7 @@ export class CBRFRateService extends RateService {
       !myJson.ValCurs.children ||
       myJson.ValCurs?.content === ERROR_RESPONSE
     ) {
-      throw new error.ValidationError('Invalid data format');
+      throw new errorUtils.ValidationError('Invalid data format');
     }
 
     const valCursChildren = myJson.ValCurs.children;
@@ -46,8 +46,8 @@ export class CBRFRateService extends RateService {
     return convertedData;
   };
 
-  prepareData(response: { data: string }, date: string): RatesInfo {
-    const rates = this.convertXML(response.data);
+  prepareData(data: string, date: string): RatesInfo {
+    const rates = this.convertXML(data);
 
     return { base: 'RUB', rates, date };
   }
@@ -74,10 +74,6 @@ export class CBRFRateService extends RateService {
     const cbrfDate = getCBRFDate(date);
 
     const response = await this.apiClient.fetchRates(cbrfDate);
-
-    if (!response.ok) {
-      throw new error.APIError(response.error);
-    }
 
     const rates = await this.prepareData(response, date);
 

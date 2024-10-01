@@ -35,4 +35,13 @@ class APIError extends AppError {
   }
 }
 
-export const error = { ValidationError, AppError, APIError };
+
+class DBError extends AppError {
+  type: ErrorType = 'DatabaseError';
+
+  constructor(message: string) {
+    super(message, 500);
+  }
+}
+
+export const errorUtils = { ValidationError, AppError, APIError, DBError };

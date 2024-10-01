@@ -2,6 +2,7 @@ import { RatesInfo } from '../api/types';
 import { db } from '../db';
 import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { errorUtils } from '../utils';
 
 export class DailyEntriesService {
   private db = db;
@@ -22,17 +23,21 @@ export class DailyEntriesService {
         return JSON.parse(result.textContent);
       }
     } catch (error) {
-      console.log('error: ', error);
+      throw new errorUtils.DBError('Something went wrong on getting entry');
     }
   };
 
   setEntry = async (date: string, rates: RatesInfo) => {
     const textContent = JSON.stringify(rates);
 
-    await this.db.insert(this.table).values({
-      date,
-      textContent,
-    });
+    try {
+      await this.db.insert(this.table).values({
+        date,
+        textContent,
+      });
+    } catch (error) {
+      throw new errorUtils.DBError('Something went wrong on setting entry');
+    }
   };
 }
 
