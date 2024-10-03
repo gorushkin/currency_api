@@ -1,18 +1,26 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e448ca8a-98d3-4006-a572-7c6fac608f73",
+  "id": "7cb2edd5-0019-4743-8935-e741396f0d6a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "daily_cbrf_entries": {
       "name": "daily_cbrf_entries",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
         "date": {
           "name": "date",
           "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_DATE)"
         },
         "text_content": {
           "name": "text_content",
@@ -23,22 +31,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {
+        "daily_cbrf_entries_id_unique": {
+          "name": "daily_cbrf_entries_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
         "daily_cbrf_entries_date_unique": {
           "name": "daily_cbrf_entries_date_unique",
           "columns": [
@@ -61,12 +76,20 @@
     "daily_oer_entries": {
       "name": "daily_oer_entries",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
         "date": {
           "name": "date",
           "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_DATE)"
         },
         "text_content": {
           "name": "text_content",
@@ -77,22 +100,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {
+        "daily_oer_entries_id_unique": {
+          "name": "daily_oer_entries_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
         "daily_oer_entries_date_unique": {
           "name": "daily_oer_entries_date_unique",
           "columns": [
@@ -104,6 +134,68 @@
           "name": "daily_oer_entries_dateIndex",
           "columns": [
             "date"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "hourly_oer_entries": {
+      "name": "hourly_oer_entries",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        },
+        "text_content": {
+          "name": "text_content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "hourly_oer_entries_id_unique": {
+          "name": "hourly_oer_entries_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "hourly_oer_entries_timestamp_unique": {
+          "name": "hourly_oer_entries_timestamp_unique",
+          "columns": [
+            "timestamp"
           ],
           "isUnique": true
         }
