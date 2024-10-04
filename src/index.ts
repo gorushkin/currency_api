@@ -1,4 +1,10 @@
 import { appStart } from './app';
 import { config } from './config';
+import { updater } from './updater';
 
-appStart(config.PORT);
+const startApp = async () => {
+  await appStart(config.PORT);
+  updater();
+};
+
+startApp();
