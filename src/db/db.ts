@@ -3,4 +3,4 @@ import Database from 'better-sqlite3';
 import * as schema from './schema';
 
 export const client = new Database('sqlite.db');
-export const db = drizzle(client, { schema, logger: true });
+export const db = drizzle(client, { schema });

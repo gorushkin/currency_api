@@ -2,6 +2,7 @@ import { RatesInfo } from '../api/types';
 import { hourlyOEREntries, HourlyTable } from '../db/schema';
 import { AppError } from '../utils';
 import { DBService } from './dbTable';
+import { desc } from 'drizzle-orm';
 
 export class HourlyEntriesService extends DBService {
   private table: HourlyTable;
@@ -13,13 +14,14 @@ export class HourlyEntriesService extends DBService {
 
   getLastEntry = async (): Promise<RatesInfo | undefined> => {
     try {
-      const [result] = await this.db
+      const [lastTransaction] = await this.db
         .select({ textContent: this.table.textContent })
         .from(this.table)
+        .orderBy(desc(this.table.id))
         .limit(1);
 
-      if (result) {
-        return JSON.parse(result.textContent);
+      if (lastTransaction) {
+        return JSON.parse(lastTransaction.textContent);
       }
     } catch (error) {
       throw new AppError.DBError('Something went wrong on getting entry');

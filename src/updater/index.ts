@@ -1,33 +1,30 @@
 import { CronJob } from 'cron';
 import { oerrRateService } from '../services/OERRateService';
 import { cbrfRateService } from '../services/CBRFRateService';
-import { getCurrentDateTime } from '../utils/dates';
+import { logger } from '../utils/logger';
 
 enum INTERVALS {
-  HOUR = '0 0 * * * ',
-  DAY = '0 9 * * *',
+  HOUR = '0 * * * *',
+  DAY_MORNING = '0 9 * * *',
+  DAY_START = '0 1 * * *',
   MINUTE = '* * * * *',
   SECOND = '*/5 * * * * *',
 }
 
-getCurrentDateTime();
-
-const onComplete = () => {
-  console.log('updateRates', getCurrentDateTime());
-};
+const updateLogger = logger.log('updateRates');
 
 export const updateHourlyRates = CronJob.from({
   cronTime: INTERVALS.HOUR,
   onTick: () => {
     oerrRateService.updateCurrentRates();
+    updateLogger('updateCurrentRates');
   },
-  onComplete,
   start: true,
   timeZone: 'utc',
 });
 
 export const updateDailyRates = CronJob.from({
-  cronTime: INTERVALS.HOUR,
+  cronTime: INTERVALS.DAY_START,
   onTick: () => {
     const promises = [
       cbrfRateService.updateYesterdayRates(),
@@ -35,8 +32,8 @@ export const updateDailyRates = CronJob.from({
     ];
 
     Promise.all(promises);
+    updateLogger('updateDailyRates');
   },
-  onComplete,
   start: true,
   timeZone: 'utc',
 });
