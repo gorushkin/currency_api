@@ -59,6 +59,6 @@ class NotFoundError extends AppError {
 APIError.ValidationError = ValidationError;
 APIError.APIError = APIError;
 APIError.DBError = DBError;
-APIError.DataError = NotFoundError;
+APIError.NotFoundError = NotFoundError;
 
 export { AppError };

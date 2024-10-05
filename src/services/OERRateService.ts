@@ -2,7 +2,11 @@ import { OERApiClient } from '../api/OERApiClient';
 import { Rates, RatesInfo } from '../api/types';
 import { dailyOEREntriesService, hourlyCBRFEntriesService } from '../database';
 import { AppError } from '../utils';
-import { getCurrentDateTime, getResponseFormattedDate } from '../utils/dates';
+import {
+  getCurrentDateTime,
+  getResponseFormattedDate,
+  getYesterdayDate,
+} from '../utils/dates';
 import { RateService } from './RateService';
 
 class OERRateService extends RateService {
@@ -43,7 +47,6 @@ class OERRateService extends RateService {
 
     const rates = this.prepareData(response, date);
     await this.hourlyDB.addEntry(rates);
-
     return rates;
   }
 
@@ -64,6 +67,12 @@ class OERRateService extends RateService {
     await this.dailyDB.setEntry(date, rates);
 
     return rates;
+  }
+
+  async updateYesterdayRates(): Promise<RatesInfo> {
+    const yesterdayDate = getYesterdayDate();
+
+    return this.getRatesByDate(yesterdayDate);
   }
 }
 

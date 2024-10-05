@@ -12,6 +12,9 @@ export const getCurrentDate = (): string => dayjs().format(INPUT_DATE_FORMAT);
 export const getCurrentDateTime = (): string =>
   dayjs().format(CURRENT_DATE_FORMAT);
 
+
+export const getYesterdayDate = (): string => dayjs().subtract(1, 'day').format(INPUT_DATE_FORMAT);
+
 export const validateDate = (dateString: string) =>
   dayjs(dateString, INPUT_DATE_FORMAT, true).isValid();
 

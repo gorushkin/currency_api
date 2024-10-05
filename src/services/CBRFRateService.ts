@@ -5,7 +5,11 @@ import { getCBRFDate } from '../utils';
 import { AppError } from '../utils';
 import { dailyCBRFEntriesService } from '../database';
 import { RateService } from './RateService';
-import { getCurrentDateTime, getResponseFormattedDate } from '../utils/dates';
+import {
+  getCurrentDateTime,
+  getResponseFormattedDate,
+  getYesterdayDate,
+} from '../utils/dates';
 
 const ERROR_RESPONSE = 'Error in parameters';
 
@@ -84,6 +88,12 @@ class CBRFRateService extends RateService {
 
     return rates;
   };
+
+  async updateYesterdayRates(): Promise<RatesInfo> {
+    const yesterdayDate = getYesterdayDate();
+
+    return this.getRatesByDate(yesterdayDate);
+  }
 }
 
 export const cbrfRateService = new CBRFRateService();
