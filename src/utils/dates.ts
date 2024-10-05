@@ -11,9 +11,6 @@ const CURRENT_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 const utcDayjs = () => dayjs().utc();
 
-export const getCurrentDate = (): string =>
-  utcDayjs().format(INPUT_DATE_FORMAT);
-
 export const getCurrentDateTime = (): string =>
   utcDayjs().format(CURRENT_DATE_FORMAT);
 
