@@ -3,7 +3,7 @@ import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
 import { getCBRFDate } from '../utils';
 import { AppError } from '../utils';
-import { dailyCBRFEntriesService } from '../database';
+import { dailyCbrfRates } from '../entities';
 import { RateService } from './RateService';
 import {
   getCurrentDateTime,
@@ -17,7 +17,7 @@ const cbrfLogger = logger.log('cbrfLogger');
 
 class CBRFRateService extends RateService {
   private apiClient = new CBRFRateApiClient();
-  private db = dailyCBRFEntriesService;
+  private db = dailyCbrfRates;
 
   private convertXML = (data: string) => {
     const myJson = convertXML(data) as unknown as ParsedData;

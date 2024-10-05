@@ -1,10 +1,10 @@
 import { RatesInfo } from '../api/types';
-import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../dbConfig/schema';
+import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { AppError } from '../utils';
-import { DBService } from './dbTable';
+import { Rates } from './rates';
 
-export class DailyEntriesService extends DBService {
+export class DailyRates extends Rates {
   private table: DailyTable;
 
   constructor(table: DailyTable) {
@@ -42,8 +42,8 @@ export class DailyEntriesService extends DBService {
   };
 }
 
-export const dailyCBRFEntriesService = new DailyEntriesService(
+export const dailyCbrfRates = new DailyRates(
   dailyCBRFEntries,
 );
 
-export const dailyOEREntriesService = new DailyEntriesService(dailyOEREntries);
+export const dailyOerRates = new DailyRates(dailyOEREntries);

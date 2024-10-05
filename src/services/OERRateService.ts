@@ -1,6 +1,6 @@
 import { OERApiClient } from '../api/OERApiClient';
 import { Rates, RatesInfo } from '../api/types';
-import { dailyOEREntriesService, hourlyCBRFEntriesService } from '../database';
+import { dailyOerRates, hourlyOerRates } from '../entities';
 import { AppError } from '../utils';
 import {
   getCurrentDateTime,
@@ -14,8 +14,8 @@ const oerrLogger = logger.log('oerrLogger');
 
 class OERRateService extends RateService {
   private OERApiClient = new OERApiClient();
-  private dailyDB = dailyOEREntriesService;
-  private hourlyDB = hourlyCBRFEntriesService;
+  private dailyRates = dailyOerRates;
+  private hourlyRates = hourlyOerRates;
 
   private convertRates(rates: Rates, rubRate: number): Record<string, number> {
     return Object.entries(rates).reduce<Rates>(
@@ -36,7 +36,7 @@ class OERRateService extends RateService {
 
   async getCurrentRates(): Promise<RatesInfo> {
     oerrLogger('FETCH OER CURRENT RATES');
-    const currentEntry = await this.hourlyDB.getLastEntry();
+    const currentEntry = await this.hourlyRates.getLastEntry();
 
     if (currentEntry) {
       return currentEntry;
@@ -50,7 +50,7 @@ class OERRateService extends RateService {
     const date = getCurrentDateTime();
 
     const rates = this.prepareData(response, date);
-    await this.hourlyDB.addEntry(rates);
+    await this.hourlyRates.addEntry(rates);
     return rates;
   }
 
@@ -58,7 +58,7 @@ class OERRateService extends RateService {
     oerrLogger(`FETCH OER RATES BY DATE ${date}`);
     this.validateDate(date);
 
-    const entry = await this.dailyDB.getEntry(date);
+    const entry = await this.dailyRates.getEntry(date);
 
     if (entry) {
       return entry;
@@ -69,7 +69,7 @@ class OERRateService extends RateService {
 
     const rates = this.prepareData(response, ratesDate);
 
-    await this.dailyDB.setEntry(date, rates);
+    await this.dailyRates.setEntry(date, rates);
 
     return rates;
   }

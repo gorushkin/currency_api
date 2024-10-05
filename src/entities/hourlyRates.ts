@@ -1,10 +1,10 @@
 import { RatesInfo } from '../api/types';
-import { hourlyOEREntries, HourlyTable } from '../dbConfig/schema';
+import { hourlyOEREntries, HourlyTable } from '../db/schema';
 import { AppError } from '../utils';
-import { DBService } from './dbTable';
+import { Rates } from './rates';
 import { desc } from 'drizzle-orm';
 
-export class HourlyEntriesService extends DBService {
+export class HourlyRates extends Rates {
   private table: HourlyTable;
 
   constructor(table: HourlyTable) {
@@ -41,6 +41,6 @@ export class HourlyEntriesService extends DBService {
   };
 }
 
-export const hourlyCBRFEntriesService = new HourlyEntriesService(
+export const hourlyOerRates = new HourlyRates(
   hourlyOEREntries,
 );
