@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { errorUtils } from '../utils';
+import { AppError } from '../utils';
 
 export const fetcher = async <T>(url: string, source: string) => {
   try {
@@ -8,6 +8,6 @@ export const fetcher = async <T>(url: string, source: string) => {
 
     return data;
   } catch (error) {
-    throw new errorUtils.APIError(`Error fetching ${source} rate`);
+    throw new AppError.APIError(`Error fetching ${source} rate`);
   }
 };

@@ -1,9 +1,11 @@
 import { OERApiClient } from '../api/OERApiClient';
 import { Rates, RatesInfo } from '../api/types';
 import { dailyOEREntriesService, hourlyCBRFEntriesService } from '../database';
+import { AppError } from '../utils';
+import { getCurrentDateTime, getResponseFormattedDate } from '../utils/dates';
 import { RateService } from './RateService';
 
-export class OERRateService extends RateService {
+class OERRateService extends RateService {
   private OERApiClient = new OERApiClient();
   private dailyDB = dailyOEREntriesService;
   private hourlyDB = hourlyCBRFEntriesService;
@@ -15,12 +17,14 @@ export class OERRateService extends RateService {
     );
   }
 
-  prepareData(data: Rates, date: string): RatesInfo {
+  prepareData(data: Rates, ratesDate: string): RatesInfo {
     const rubRate = data['RUB'];
 
     const rates = this.convertRates(data, rubRate);
 
-    return { base: 'RUB', rates, date };
+    const requestDate = getCurrentDateTime();
+
+    return { base: 'RUB', rates, ratesDate, requestDate };
   }
 
   async getCurrentRates(): Promise<RatesInfo> {
@@ -30,9 +34,14 @@ export class OERRateService extends RateService {
       return currentEntry;
     }
 
-    const response = await this.OERApiClient.fetchCurrentRate();
+    throw new AppError.NotFoundError('No data in the database');
+  }
 
-    const rates = this.prepareData(response, 'no date');
+  async updateCurrentRates(): Promise<RatesInfo> {
+    const response = await this.OERApiClient.fetchCurrentRate();
+    const date = getCurrentDateTime();
+
+    const rates = this.prepareData(response, date);
     await this.hourlyDB.addEntry(rates);
 
     return rates;
@@ -48,11 +57,14 @@ export class OERRateService extends RateService {
     }
 
     const response = await this.OERApiClient.fetchDateRate(date);
+    const ratesDate = getResponseFormattedDate(date);
 
-    const rates = this.prepareData(response, date);
+    const rates = this.prepareData(response, ratesDate);
 
     await this.dailyDB.setEntry(date, rates);
 
     return rates;
   }
 }
+
+export const oerrRateService: OERRateService = new OERRateService();

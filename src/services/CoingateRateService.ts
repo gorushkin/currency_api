@@ -1,7 +1,6 @@
 import { CoingateRateApiClient } from '../api/CoingateRateApiClient';
 import { Currency } from '../api/types';
-
-export class CoingateRateService {
+class CoingateRateService {
   private currencies: Currency[] = Object.values(Currency);
 
   private coingateRateApiClient = new CoingateRateApiClient();
@@ -19,3 +18,5 @@ export class CoingateRateService {
     return { base: 'RUB', rates };
   }
 }
+
+export const coingateRateService = new CoingateRateService();

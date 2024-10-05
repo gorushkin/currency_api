@@ -8,6 +8,7 @@ export class CBRFRateApiClient {
 
   async fetchRates(date: string): Promise<string> {
     const url = this.getApiUrl(date);
+    console.log('url: ', url);
 
     return await this.fetcher<string>(url, 'CBRF');
   }

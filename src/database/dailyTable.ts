@@ -1,7 +1,7 @@
 import { RatesInfo } from '../api/types';
 import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { errorUtils } from '../utils';
+import { AppError } from '../utils';
 import { DBService } from './dbTable';
 
 export class DailyEntriesService extends DBService {
@@ -24,7 +24,7 @@ export class DailyEntriesService extends DBService {
         return JSON.parse(result.textContent);
       }
     } catch (error) {
-      throw new errorUtils.DBError('Something went wrong on getting entry');
+      throw new AppError.DBError('Something went wrong on getting entry');
     }
   };
 
@@ -37,7 +37,7 @@ export class DailyEntriesService extends DBService {
         textContent,
       });
     } catch (error) {
-      throw new errorUtils.DBError('Something went wrong on setting entry');
+      throw new AppError.DBError('Something went wrong on setting entry');
     }
   };
 }

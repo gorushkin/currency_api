@@ -1,15 +1,15 @@
 import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
-import { getCurrentDate } from '../utils';
 import { getCBRFDate } from '../utils';
-import { errorUtils } from '../utils';
+import { AppError } from '../utils';
 import { dailyCBRFEntriesService } from '../database';
 import { RateService } from './RateService';
+import { getCurrentDateTime, getResponseFormattedDate } from '../utils/dates';
 
 const ERROR_RESPONSE = 'Error in parameters';
 
-export class CBRFRateService extends RateService {
+class CBRFRateService extends RateService {
   private apiClient = new CBRFRateApiClient();
   private db = dailyCBRFEntriesService;
 
@@ -21,7 +21,7 @@ export class CBRFRateService extends RateService {
       !myJson.ValCurs.children ||
       myJson.ValCurs?.content === ERROR_RESPONSE
     ) {
-      throw new errorUtils.ValidationError('Invalid data format');
+      throw new AppError.ValidationError('Invalid data format');
     }
 
     const valCursChildren = myJson.ValCurs.children;
@@ -46,14 +46,16 @@ export class CBRFRateService extends RateService {
     return convertedData;
   };
 
-  prepareData(data: string, date: string): RatesInfo {
+  prepareData(data: string, ratesDate: string): RatesInfo {
     const rates = this.convertXML(data);
 
-    return { base: 'RUB', rates, date };
+    const requestDate = getCurrentDateTime();
+
+    return { base: 'RUB', rates, ratesDate, requestDate };
   }
 
   async getCurrentRates(): Promise<RatesInfo> {
-    const date = getCurrentDate();
+    const date = getCurrentDateTime();
 
     return this.getRates(date);
   }
@@ -74,11 +76,14 @@ export class CBRFRateService extends RateService {
     const cbrfDate = getCBRFDate(date);
 
     const response = await this.apiClient.fetchRates(cbrfDate);
+    const ratesDate = getResponseFormattedDate(date);
 
-    const rates = await this.prepareData(response, date);
+    const rates = await this.prepareData(response, ratesDate);
 
     await this.db.setEntry(date, rates);
 
     return rates;
   };
 }
+
+export const cbrfRateService = new CBRFRateService();

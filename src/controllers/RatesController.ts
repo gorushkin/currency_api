@@ -1,16 +1,16 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { CBRFRateService } from '../services/CBRFRateService';
-import { CoingateRateService } from '../services/CoingateRateService';
-import { OERRateService } from '../services/OERRateService';
+import { cbrfRateService } from '../services/CBRFRateService';
+import { coingateRateService } from '../services/CoingateRateService';
+import { oerrRateService } from '../services/OERRateService';
 
 export type WithDateRequest = FastifyRequest<{
   Querystring: { date: string };
 }>;
 
 class RatesController {
-  private cbrfRateService = new CBRFRateService();
-  private coingateRateService = new CoingateRateService();
-  private OERRateService = new OERRateService();
+  private cbrfRateService = cbrfRateService;
+  private coingateRateService = coingateRateService;
+  private oerrRateService = oerrRateService;
 
   async getCBRFRates(req: WithDateRequest, res: FastifyReply) {
     const date = req.query.date;
@@ -32,8 +32,8 @@ class RatesController {
     const date = req.query.date;
 
     const rates = date
-      ? await this.OERRateService.getRatesByDate(date)
-      : await this.OERRateService.getCurrentRates();
+      ? await this.oerrRateService.getRatesByDate(date)
+      : await this.oerrRateService.getCurrentRates();
 
     res.send(rates);
   }

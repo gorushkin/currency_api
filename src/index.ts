@@ -1,10 +1,10 @@
 import { appStart } from './app';
 import { config } from './config';
-import { updater } from './updater';
+import { updateHourlyRates } from './updater';
 
 const startApp = async () => {
   await appStart(config.PORT);
-  updater();
+  updateHourlyRates.start();
 };
 
 startApp();

@@ -1,6 +1,6 @@
 import { RatesInfo } from '../api/types';
 import { hourlyOEREntries, HourlyTable } from '../db/schema';
-import { errorUtils } from '../utils';
+import { AppError } from '../utils';
 import { DBService } from './dbTable';
 
 export class HourlyEntriesService extends DBService {
@@ -22,7 +22,7 @@ export class HourlyEntriesService extends DBService {
         return JSON.parse(result.textContent);
       }
     } catch (error) {
-      throw new errorUtils.DBError('Something went wrong on getting entry');
+      throw new AppError.DBError('Something went wrong on getting entry');
     }
   };
 
@@ -34,7 +34,7 @@ export class HourlyEntriesService extends DBService {
         textContent,
       });
     } catch (error) {
-      throw new errorUtils.DBError('Something went wrong on setting entry');
+      throw new AppError.DBError('Something went wrong on setting entry');
     }
   };
 }
