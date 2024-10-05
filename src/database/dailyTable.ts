@@ -1,5 +1,5 @@
 import { RatesInfo } from '../api/types';
-import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../db/schema';
+import { dailyCBRFEntries, dailyOEREntries, DailyTable } from '../dbConfig/schema';
 import { eq } from 'drizzle-orm';
 import { AppError } from '../utils';
 import { DBService } from './dbTable';

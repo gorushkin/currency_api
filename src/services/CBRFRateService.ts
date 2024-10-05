@@ -10,8 +10,10 @@ import {
   getResponseFormattedDate,
   getYesterdayDate,
 } from '../utils/dates';
+import { logger } from '../utils/logger';
 
 const ERROR_RESPONSE = 'Error in parameters';
+const cbrfLogger = logger.log('cbrfLogger');
 
 class CBRFRateService extends RateService {
   private apiClient = new CBRFRateApiClient();
@@ -60,12 +62,14 @@ class CBRFRateService extends RateService {
 
   async getCurrentRates(): Promise<RatesInfo> {
     const date = getCurrentDateTime();
+    cbrfLogger(`FETCH CBRF CURRENT RATES ${date}`);
 
     return this.getRates(date);
   }
 
   async getRatesByDate(date: string): Promise<RatesInfo> {
     this.validateDate(date);
+    cbrfLogger(`FETCH CBRF RATES BY DATE  ${date}`);
 
     return this.getRates(date);
   }

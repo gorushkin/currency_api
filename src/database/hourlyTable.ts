@@ -1,5 +1,5 @@
 import { RatesInfo } from '../api/types';
-import { hourlyOEREntries, HourlyTable } from '../db/schema';
+import { hourlyOEREntries, HourlyTable } from '../dbConfig/schema';
 import { AppError } from '../utils';
 import { DBService } from './dbTable';
 import { desc } from 'drizzle-orm';

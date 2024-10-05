@@ -7,7 +7,10 @@ import {
   getResponseFormattedDate,
   getYesterdayDate,
 } from '../utils/dates';
+import { logger } from '../utils/logger';
 import { RateService } from './RateService';
+
+const oerrLogger = logger.log('oerrLogger');
 
 class OERRateService extends RateService {
   private OERApiClient = new OERApiClient();
@@ -32,6 +35,7 @@ class OERRateService extends RateService {
   }
 
   async getCurrentRates(): Promise<RatesInfo> {
+    oerrLogger('FETCH OER CURRENT RATES');
     const currentEntry = await this.hourlyDB.getLastEntry();
 
     if (currentEntry) {
@@ -51,6 +55,7 @@ class OERRateService extends RateService {
   }
 
   async getRatesByDate(date: string): Promise<RatesInfo> {
+    oerrLogger(`FETCH OER RATES BY DATE ${date}`);
     this.validateDate(date);
 
     const entry = await this.dailyDB.getEntry(date);
