@@ -21,7 +21,7 @@ const ratesRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.COINGATE, (req, res) =>
     ratesController.getCoingateRates(req, res),
   );
-  app.get(ROUTES.OER, (req, res) => ratesController.getOERRates(req, res));
+  app.get(ROUTES.OER, (req, res) => ratesController.getOERRates(req as WithDateRequest, res));
 };
 
 const testRoutes = async (app: FastifyInstance) => {

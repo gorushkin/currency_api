@@ -10,6 +10,11 @@ type ErrorType =
 class AppError extends Error {
   type: ErrorType = 'InternalError';
 
+  static ValidationError: typeof ValidationError;
+  static APIError: typeof APIError;
+  static DBError: typeof DBError;
+  static NotFoundError: typeof NotFoundError;
+
   constructor(
     message: string,
     public statusCode: number,
@@ -35,4 +40,25 @@ class APIError extends AppError {
   }
 }
 
-export const error = { ValidationError, AppError, APIError };
+class DBError extends AppError {
+  type: ErrorType = 'DatabaseError';
+
+  constructor(message: string) {
+    super(message, 500);
+  }
+}
+
+class NotFoundError extends AppError {
+  type: ErrorType = 'NotFoundError';
+
+  constructor(message: string) {
+    super(message, 401);
+  }
+}
+
+APIError.ValidationError = ValidationError;
+APIError.APIError = APIError;
+APIError.DBError = DBError;
+APIError.NotFoundError = NotFoundError;
+
+export { AppError };
