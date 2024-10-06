@@ -13,4 +13,4 @@ RUN npm run build
 
 EXPOSE 4500
 
-CMD node dist/index.js
+CMD npm run start
