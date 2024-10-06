@@ -1,6 +1,6 @@
 import { RatesInfo } from '../api/types';
 import { hourlyOEREntries, HourlyTable } from '../db/schema';
-import { AppError } from '../utils';
+import { DBError } from '../utils';
 import { Rates } from './rates';
 import { desc } from 'drizzle-orm';
 
@@ -24,7 +24,7 @@ export class HourlyRates extends Rates {
         return JSON.parse(lastTransaction.textContent);
       }
     } catch (error) {
-      throw new AppError.DBError('Something went wrong on getting entry');
+      throw new DBError('Something went wrong on getting entry');
     }
   };
 
@@ -36,7 +36,7 @@ export class HourlyRates extends Rates {
         textContent,
       });
     } catch (error) {
-      throw new AppError.DBError('Something went wrong on setting entry');
+      throw new DBError('Something went wrong on setting entry');
     }
   };
 }

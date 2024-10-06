@@ -2,7 +2,7 @@ import { CBRFRateApiClient } from '../api/CBRFRateApiClient';
 import { convertXML } from 'simple-xml-to-json';
 import { ParsedData, Rates, RatesInfo, CBRFCurrency } from '../api/types';
 import { getCBRFDate } from '../utils';
-import { AppError } from '../utils';
+import { ValidationError } from '../utils';
 import { dailyCbrfRates } from '../entities';
 import { RateService } from './RateService';
 import {
@@ -27,7 +27,7 @@ class CBRFRateService extends RateService {
       !myJson.ValCurs.children ||
       myJson.ValCurs?.content === ERROR_RESPONSE
     ) {
-      throw new AppError.ValidationError('Invalid data format');
+      throw new ValidationError('Invalid data format');
     }
 
     const valCursChildren = myJson.ValCurs.children;

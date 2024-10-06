@@ -1,7 +1,7 @@
 import { OERApiClient } from '../api/OERApiClient';
 import { Rates, RatesInfo } from '../api/types';
 import { dailyOerRates, hourlyOerRates } from '../entities';
-import { AppError } from '../utils';
+import { NotFoundError } from '../utils';
 import {
   getCurrentDateTime,
   getResponseFormattedDate,
@@ -42,7 +42,7 @@ class OERRateService extends RateService {
       return currentEntry;
     }
 
-    throw new AppError.NotFoundError('No data in the database');
+    throw new NotFoundError('No data in the database');
   }
 
   async updateCurrentRates(): Promise<RatesInfo> {

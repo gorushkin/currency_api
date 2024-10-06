@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AppError } from '../utils';
+import { APIError } from '../utils';
 import { logger } from '../utils/logger';
 
 const fetchLogger = logger.log('fetchLogger');
@@ -10,6 +10,6 @@ export const fetcher = async <T>(url: string, source: string) => {
 
     return data;
   } catch (error) {
-    throw new AppError.APIError(`Error fetching ${source} rate`);
+    throw new APIError(`Error fetching ${source} rate`);
   }
 };
