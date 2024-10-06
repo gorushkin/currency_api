@@ -1,14 +1,12 @@
 import { RatesInfo } from '../api/types';
-import { AppError, validateDate } from '../utils';
+import { ValidationError, validateDate } from '../utils';
 
 export abstract class RateService {
   validateDate(dateString: string) {
     const isValidDate = validateDate(dateString);
 
     if (!isValidDate) {
-      throw new AppError.ValidationError(
-        'Invalid date format: use YYYY-MM-DD',
-      );
+      throw new ValidationError('Invalid date format: use YYYY-MM-DD');
     }
   }
 

@@ -10,11 +10,6 @@ type ErrorType =
 class AppError extends Error {
   type: ErrorType = 'InternalError';
 
-  static ValidationError: typeof ValidationError;
-  static APIError: typeof APIError;
-  static DBError: typeof DBError;
-  static NotFoundError: typeof NotFoundError;
-
   constructor(
     message: string,
     public statusCode: number,
@@ -52,13 +47,8 @@ class NotFoundError extends AppError {
   type: ErrorType = 'NotFoundError';
 
   constructor(message: string) {
-    super(message, 401);
+    super(message, 404);
   }
 }
 
-APIError.ValidationError = ValidationError;
-APIError.APIError = APIError;
-APIError.DBError = DBError;
-APIError.NotFoundError = NotFoundError;
-
-export { AppError };
+export { AppError, ValidationError, APIError, DBError, NotFoundError };
