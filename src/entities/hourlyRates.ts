@@ -12,6 +12,24 @@ export class HourlyRates extends Rates {
     this.table = table;
   }
 
+  getLastEntries = async (
+    limit: number = 48,
+  ): Promise<RatesInfo[] | undefined> => {
+    try {
+      const entries = await this.db
+        .select({ textContent: this.table.textContent })
+        .from(this.table)
+        .orderBy(desc(this.table.id))
+        .limit(limit);
+
+      if (entries.length) {
+        return entries.map((entry) => JSON.parse(entry.textContent));
+      }
+    } catch (error) {
+      throw new DBError('Something went wrong on getting entry');
+    }
+  };
+
   getLastEntry = async (): Promise<RatesInfo | undefined> => {
     try {
       const [lastTransaction] = await this.db
@@ -41,6 +59,4 @@ export class HourlyRates extends Rates {
   };
 }
 
-export const hourlyOerRates = new HourlyRates(
-  hourlyOEREntries,
-);
+export const hourlyOerRates = new HourlyRates(hourlyOEREntries);

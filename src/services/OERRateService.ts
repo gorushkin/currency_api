@@ -34,6 +34,13 @@ class OERRateService extends RateService {
     return { base: 'RUB', rates, ratesDate, requestDate };
   }
 
+
+  async getHistoryData(): Promise<RatesInfo[]> {
+    oerrLogger('FETCH OER HISTORY DATA');
+    const res = await this.hourlyRates.getLastEntries();
+    return res || [];
+  }
+
   async getCurrentRates(): Promise<RatesInfo> {
     oerrLogger('FETCH OER CURRENT RATES');
     const currentEntry = await this.hourlyRates.getLastEntry();

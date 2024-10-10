@@ -56,3 +56,7 @@ export type RatesInfo = {
 };
 
 export type Response<T> = { ok: true; data: T } | { ok: false; error: string };
+
+type HistoryRate = { date: string; rate: number };
+
+export type HistoryData = Record<string, HistoryRate[]>;
