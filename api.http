@@ -28,6 +28,10 @@ http://localhost:4500/currency-rates/oer
 http://localhost:4500/currency-rates/oer?date=2024-08-17
 
 
+### Get rates
+http://localhost:4500/currency-rates/rates
+
+
 ### testRoutes
 
 http://localhost:4500/
