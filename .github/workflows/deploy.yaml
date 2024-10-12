@@ -101,7 +101,7 @@ jobs:
           echo $WORK_DIR/.env
           echo $WORK_DIR/$ENV
           ssh $SSH 'cd ${{vars.WORK_DIR}} && \
-            docker run --env-file ${$WORK_DIR/.env \
+            docker run --env-file $WORK_DIR/.env \
             --pull always  \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
