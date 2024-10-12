@@ -74,20 +74,14 @@ jobs:
       - name: Upload .env to remote server
         run: |
           echo "Uploading .env file"
-          scp $ENV $SSH:${{vars.WORK_DIR}}/${{vars.APP_NAME}}/$ENV
-
-      - name: Test vaiables
-        run: |
-          echo "Testing variables"
-          echo ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
-          echo $WORK_DIR
+          scp $ENV $SSH:$WORK_DIR/$ENV
 
       - name: Verify .env file
         run: |
           echo "Checking .env file"
           ssh $SSH 'pwd'
           ssh $SSH 'ls ${{vars.WORK_DIR}}'
-          echo "${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env"
+          echo "$WORK_DIR/.env"
           ssh $SSH 'cd ${{vars.WORK_DIR}} && cat ${{vars.APP_NAME}}/.env'
 
       - name: Pull image from GHCR
