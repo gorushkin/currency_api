@@ -97,8 +97,11 @@ jobs:
           echo $IMAGE_NAME
           echo ${{vars.WORK_DIR}}
           echo ${{vars.APP_NAME}}
+          echo ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env
+          echo $WORK_DIR/.env
+          echo $WORK_DIR/$ENV
           ssh $SSH 'cd ${{vars.WORK_DIR}} && \
-            docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/$ENV \
+            docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
             --pull always  \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
