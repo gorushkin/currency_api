@@ -102,6 +102,6 @@ jobs:
             --pull always  \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
-            -v $WORK_DIR/db/:/app/db/ \
+            -v ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/db/:/app/db/ \
             -v ${{vars.WORK_DIR}}/.env/:/app/.env \
             -p ${{vars.APP_PORT}}:4500 ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest'
