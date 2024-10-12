@@ -9,7 +9,7 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest
   SSH: ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}
   ENV: .env
-  WORK_DIR222: ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
+  WORK_DIR: ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
 
 jobs:
   update-container:
@@ -40,11 +40,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set WORK_DIR variable
-        run: |
-          export WORK_DIR2=${{vars.WORK_DIR}}/${{vars.APP_NAME}}
-          echo "WORK_DIR is set to $WORK_DIR2"
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -100,10 +95,10 @@ jobs:
           ssh $SSH 'docker stop ${{vars.APP_NAME}} && docker rm ${{vars.APP_NAME}}  || true'
           echo "Starting container..."
           ssh $SSH 'cd ${{vars.WORK_DIR}} && \
-            docker run --env-file $WORK_DIR/.env \
+            docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
             --pull always  \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
-            -v $WORK_DIR/db/:/app/db/ \
+            -v ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/db/:/app/db/ \
             -v ${{vars.WORK_DIR}}/.env/:/app/.env \
             -p ${{vars.APP_PORT}}:4500 ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest'
