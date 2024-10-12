@@ -7,7 +7,9 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest
-  SSH: ${{vars.SSH_USER}}@${{vars.SSH_HOST}}
+  SSH: ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}
+  ENV: .env
+  WORK_DIR: ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
 
 jobs:
   update-container:
@@ -33,7 +35,6 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:${{ github.sha }}
 
-
   deploy:
     needs: update-container
     runs-on: ubuntu-latest
@@ -51,7 +52,6 @@ jobs:
         run: |
           ssh-keyscan -H ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
 
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -65,23 +65,23 @@ jobs:
       - name: Create .env file from GitHub vars
         run: |
           echo "Creating .env file"
-          echo "APP_NAME=${{ vars.APP_NAME }}" > .env2
-          echo "APP_ID=${{ secrets.APP_ID }}" >> .env2
-          echo "DB_URL=${{ vars.DB_URL }}" >> .env2
-          echo "LOG_URL=${{ vars.LOG_URL }}" >> .env2
+          echo "APP_NAME=${{ vars.APP_NAME }}" > $ENV
+          echo "APP_ID=${{ secrets.APP_ID }}" >> $ENV
+          echo "DB_URL=${{ vars.DB_URL }}" >> $ENV
+          echo "DB_URL=${{ vars.APP_PORT }}" >> $ENV
+          echo "LOG_URL=${{ vars.LOG_URL }}" >> $ENV
 
       - name: Upload .env to remote server
         run: |
           echo "Uploading .env file"
-          scp .env2 ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.WORK_DIR }}/${{vars.APP_NAME}}/.env2
-
+          scp $ENV $SSH:$WORK_DIR/.$ENV
 
       - name: Verify .env file
         run: |
           echo "Checking .env file"
           ssh $SSH 'pwd'
           ssh $SSH 'ls ${{vars.WORK_DIR}}'
-          echo "${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env"
+          echo "$WORK_DIR/.env"
           ssh $SSH 'cd ${{vars.WORK_DIR}} && cat ${{vars.APP_NAME}}/.env'
 
       - name: Pull image from GHCR
@@ -98,10 +98,10 @@ jobs:
           echo ${{vars.WORK_DIR}}
           echo ${{vars.APP_NAME}}
           ssh $SSH 'cd ${{vars.WORK_DIR}} && \
-            docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
+            docker run --env-file $WORK_DIR/.env \
             --pull always  \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
-            -v ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/db/:/app/db/ \
+            -v $WORK_DIR/db/:/app/db/ \
             -v ${{vars.WORK_DIR}}/.env/:/app/.env \
             -p ${{vars.APP_PORT}}:4500 ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest'
