@@ -62,6 +62,19 @@ jobs:
       - name: List directory contents
         run: ssh $SSH 'ls ${{vars.WORK_DIR}} -la'
 
+      - name: Create .env file from GitHub vars
+        run: |
+          echo "Creating .env file"
+          echo "APP_NAME=${{ vars.APP_NAME }}" > .env2
+          echo "APP_ID=${{ secrets.APP_ID }}" >> .env2
+          echo "DB_URL=${{ vars.DB_URL }}" >> .env2
+          echo "LOG_URL=${{ vars.LOG_URL }}" >> .env2
+
+      - name: Upload .env to remote server
+        run: |
+          echo "Uploading .env file"
+          scp .env ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.WORK_DIR }}/{{vars.APP_NAME}}/.env
+
 
       - name: Verify .env file
         run: |

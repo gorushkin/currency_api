@@ -30,7 +30,7 @@ const ratesRoutes = async (app: FastifyInstance) => {
 
 const testRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.ROOT, (_, reply) => {
-    reply.send({ message: `Server is running on port ${config.PORT}` });
+    reply.send({ message: `Server is running on port ${config.APP_PORT}` });
   });
 };
 
