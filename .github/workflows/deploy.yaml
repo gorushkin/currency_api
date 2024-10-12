@@ -42,8 +42,8 @@ jobs:
     steps:
       - name: Set WORK_DIR variable
         run: |
-          export WORK_DIR=${{vars.WORK_DIR}}/${{vars.APP_NAME}}
-          echo "WORK_DIR is set to $WORK_DIR"
+          export WORK_DIR2=${{vars.WORK_DIR}}/${{vars.APP_NAME}}
+          echo "WORK_DIR is set to $WORK_DIR2"
 
       - name: Checkout code
         uses: actions/checkout@v2
