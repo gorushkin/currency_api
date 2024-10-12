@@ -8,7 +8,7 @@ on:
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest
   SSH: ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}
-  ENV: .envNew
+  ENV: .env
   WORK_DIR: ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
 
 jobs:
@@ -75,6 +75,12 @@ jobs:
         run: |
           echo "Uploading .env file"
           scp $ENV $SSH:${{vars.WORK_DIR}}/${{vars.APP_NAME}}/$ENV
+
+      - name: Test vaiables
+        run: |
+          echo "Testing variables"
+          echo ${{vars.WORK_DIR}}/${{vars.APP_NAME}}
+          echo $WORK_DIR
 
       - name: Verify .env file
         run: |
