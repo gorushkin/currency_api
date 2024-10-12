@@ -73,7 +73,7 @@ jobs:
       - name: Upload .env to remote server
         run: |
           echo "Uploading .env file"
-          scp .env ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.WORK_DIR }}/{{vars.APP_NAME}}/.env
+          scp .env2 ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.WORK_DIR }}/${{vars.APP_NAME}}/.env2
 
 
       - name: Verify .env file
