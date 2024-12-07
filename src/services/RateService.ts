@@ -10,7 +10,7 @@ export abstract class RateService {
     }
   }
 
-  abstract getCurrentRates(): Promise<RatesInfo>;
+  abstract getCurrentDayRates(): Promise<RatesInfo>;
 
   abstract getRatesByDate(date: string): Promise<RatesInfo>;
 

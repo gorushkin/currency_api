@@ -60,7 +60,7 @@ class CBRFRateService extends RateService {
     return { base: 'RUB', rates, ratesDate, requestDate };
   }
 
-  async getCurrentRates(): Promise<RatesInfo> {
+  async getCurrentDayRates(): Promise<RatesInfo> {
     const date = getCurrentDateTime();
     cbrfLogger(`FETCH CBRF CURRENT RATES ${date}`);
 
@@ -72,6 +72,14 @@ class CBRFRateService extends RateService {
     cbrfLogger(`FETCH CBRF RATES BY DATE  ${date}`);
 
     return this.getRates(date);
+  }
+
+  async getRatesByDates(dates: string[]): Promise<RatesInfo[]> {
+    cbrfLogger(`FETCH CBRF RATES BY DATE  ${dates.length}`);
+
+    const promises = dates.map((date) => this.getRates(date));
+
+    return Promise.all(promises);
   }
 
   getRates = async (date: string): Promise<RatesInfo> => {

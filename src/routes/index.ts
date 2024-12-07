@@ -19,12 +19,19 @@ const ratesRoutes = async (app: FastifyInstance) => {
   app.get(ROUTES.CBRF, (req, res) =>
     ratesController.getCBRFRates(req as WithDateRequest, res),
   );
+
+  app.post(ROUTES.CBRF, (req, res) =>
+    ratesController.getCBRFRatesByDates(req as WithDateRequest, res),
+  );
+
   app.get(ROUTES.COINGATE, (req, res) =>
     ratesController.getCoingateRates(req, res),
   );
+
   app.get(ROUTES.OER, (req, res) =>
     ratesController.getOERRates(req as WithDateRequest, res),
   );
+
   app.get(ROUTES.RATES, (req, res) => ratesController.getRates(req, res));
 };
 

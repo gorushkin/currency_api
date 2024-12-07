@@ -46,6 +46,7 @@ export enum Currency {
   TRY = 'TRY',
   CNY = 'CNY',
   RUB = 'RUB',
+  GEL = 'GEL',
 }
 
 export type RatesInfo = {

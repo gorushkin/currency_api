@@ -41,7 +41,7 @@ class OERRateService extends RateService {
     return res || [];
   }
 
-  async getCurrentRates(): Promise<RatesInfo> {
+  async getCurrentDayRates(): Promise<RatesInfo> {
     oerrLogger('FETCH OER CURRENT RATES');
     const currentEntry = await this.hourlyRates.getLastEntry();
 

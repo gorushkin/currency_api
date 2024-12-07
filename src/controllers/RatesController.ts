@@ -6,6 +6,7 @@ import { HistoryData, RatesInfo } from '../api/types';
 
 export type WithDateRequest = FastifyRequest<{
   Querystring: { date: string };
+  Body: { dates?: string[] };
 }>;
 
 class RatesController {
@@ -13,12 +14,34 @@ class RatesController {
   private coingateRateService = coingateRateService;
   private oerrRateService = oerrRateService;
 
+  async getCBRFCurrentRates(req: WithDateRequest, res: FastifyReply) {
+    const rates = await this.cbrfRateService.getCurrentDayRates();
+
+    res.send(rates);
+  }
+
   async getCBRFRates(req: WithDateRequest, res: FastifyReply) {
     const date = req.query.date;
 
-    const rates = date
-      ? await this.cbrfRateService.getRatesByDate(date)
-      : await this.cbrfRateService.getCurrentRates();
+    if (!date) {
+      return this.getCBRFCurrentRates(req, res);
+    }
+
+    const rates = await this.cbrfRateService.getRatesByDate(date);
+
+    res.send(rates);
+  }
+
+  async getCBRFRatesByDates(req: WithDateRequest, res: FastifyReply) {
+    const { dates } = req.body;
+
+    if (!dates) {
+      return this.getCBRFCurrentRates(req, res);
+    }
+
+    const rates = await Promise.all(
+      dates.map((date) => this.cbrfRateService.getRatesByDate(date)),
+    );
 
     res.send(rates);
   }
@@ -34,7 +57,7 @@ class RatesController {
 
     const rates = date
       ? await this.oerrRateService.getRatesByDate(date)
-      : await this.oerrRateService.getCurrentRates();
+      : await this.oerrRateService.getCurrentDayRates();
 
     res.send(rates);
   }
