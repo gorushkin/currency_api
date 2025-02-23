@@ -41,11 +41,15 @@ class CBRFRateService extends RateService {
         return acc;
       }, {} as CBRFCurrency);
 
+      const value = parseFloat(params.Value.content.replace(',', '.'));
+
+      const nominal = parseFloat(params.Nominal.content.replace(',', '.'));
+
+      const result = value / nominal;
+
       return {
         ...acc,
-        [params.CharCode.content]: parseFloat(
-          params.Value.content.replace(',', '.'),
-        ),
+        [params.CharCode.content]: result,
       };
     }, {});
 
