@@ -68,7 +68,7 @@ jobs:
           echo "APP_NAME=${{ vars.APP_NAME }}" > $ENV
           echo "APP_ID=${{ secrets.APP_ID }}" >> $ENV
           echo "DB_URL=${{ vars.DB_URL }}" >> $ENV
-          echo "DB_URL=${{ vars.APP_PORT }}" >> $ENV
+          echo "APP_PORT=${{ vars.APP_PORT }}" >> $ENV
           echo "LOG_URL=${{ vars.LOG_URL }}" >> $ENV
 
       - name: Upload .env to remote server
@@ -87,18 +87,25 @@ jobs:
       - name: Pull image from GHCR
         run: docker pull $IMAGE_NAME
 
+      - name: Run migrations
+        run: |
+          echo "Running migrations on remote server..."
+          ssh $SSH 'docker run --rm \
+            --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
+            --network ${{vars.APP_NETWORK}} \
+            -v ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/db/:/app/db/ \
+            -v ${{vars.WORK_DIR}}/.env/:/app/.env \
+            ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest \
+            npm run db:migrate:prod'
+
       - name: Deploy to remote server
         run: |
           echo "Deploying to $SSH"
-          echo "Checking running containers..."
-          echo 'docker ps -a'
-          ssh $SSH 'docker stop ${{vars.APP_NAME}} && docker rm ${{vars.APP_NAME}}  || true'
-          echo "Starting container..."
-          ssh $SSH 'cd ${{vars.WORK_DIR}} && \
-            docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
-            --pull always  \
+          ssh $SSH 'docker stop ${{vars.APP_NAME}} && docker rm ${{vars.APP_NAME}} || true'
+          ssh $SSH "docker run --env-file ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/.env \
+            --pull always \
             -d --name ${{vars.APP_NAME}} \
             --network ${{vars.APP_NETWORK}} \
             -v ${{vars.WORK_DIR}}/${{vars.APP_NAME}}/db/:/app/db/ \
             -v ${{vars.WORK_DIR}}/.env/:/app/.env \
-            -p ${{vars.APP_PORT}}:4500 ghcr.io/${{ github.repository_owner }}/${{ vars.APP_NAME }}:latest'
+            -p ${{vars.APP_PORT}}:4500 $IMAGE_NAME"
