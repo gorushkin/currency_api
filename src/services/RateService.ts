@@ -1,4 +1,4 @@
-import { RatesInfo } from '../api/types';
+import { type RatesInfo } from '../api/types';
 import { ValidationError, validateDate } from '../utils';
 
 export abstract class RateService {
@@ -10,9 +10,9 @@ export abstract class RateService {
     }
   }
 
-  abstract getCurrentDayRates(): Promise<RatesInfo>;
+  abstract getCurrentDayRates(): Promise<RatesInfo | null>;
 
-  abstract getRatesByDate(date: string): Promise<RatesInfo>;
+  abstract getRatesByDate(date: string): Promise<RatesInfo | null>;
 
   abstract prepareData(data: unknown, date: string): RatesInfo;
 }
