@@ -12,7 +12,7 @@
     "db:studio": "drizzle-kit studio",
     "db:migrate": "ts-node src/db/migrate.ts",
     "db:migrate:prod": "node dist/src/db/migrate.js",
-    "start": "npm run db:migrate:prod && node dist/src/index.js"
+    "start": "node dist/src/index.js"
   },
   "author": "",
   "license": "ISC",
