@@ -1,5 +1,5 @@
 import { OERApiClient } from '../api/OERApiClient';
-import { Rates, RatesInfo } from '../api/types';
+import { type Rates, type RatesInfo } from '../api/types';
 import { dailyOerRates, hourlyOerRates } from '../entities';
 import { NotFoundError } from '../utils';
 import {
@@ -13,9 +13,9 @@ import { RateService } from './RateService';
 const oerrLogger = logger.log('oerrLogger');
 
 class OERRateService extends RateService {
-  private OERApiClient = new OERApiClient();
-  private dailyRates = dailyOerRates;
-  private hourlyRates = hourlyOerRates;
+  private readonly OERApiClient = new OERApiClient();
+  private readonly dailyRates = dailyOerRates;
+  private readonly hourlyRates = hourlyOerRates;
 
   private convertRates(rates: Rates, rubRate: number): Record<string, number> {
     return Object.entries(rates).reduce<Rates>(
@@ -25,7 +25,7 @@ class OERRateService extends RateService {
   }
 
   prepareData(data: Rates, ratesDate: string): RatesInfo {
-    const rubRate = data['RUB'];
+    const rubRate = data.RUB;
 
     const rates = this.convertRates(data, rubRate);
 
@@ -33,7 +33,6 @@ class OERRateService extends RateService {
 
     return { base: 'RUB', rates, ratesDate, requestDate };
   }
-
 
   async getHistoryData(): Promise<RatesInfo[]> {
     oerrLogger('FETCH OER HISTORY DATA');
@@ -52,39 +51,48 @@ class OERRateService extends RateService {
     throw new NotFoundError('No data in the database');
   }
 
-  async updateCurrentRates(): Promise<RatesInfo> {
-    const response = await this.OERApiClient.fetchCurrentRate();
-    const date = getCurrentDateTime();
+  async updateCurrentRates(): Promise<RatesInfo | undefined> {
+    try {
+      const response = await this.OERApiClient.fetchCurrentRate();
+      const date = getCurrentDateTime();
 
-    const rates = this.prepareData(response, date);
-    await this.hourlyRates.addEntry(rates);
-    return rates;
-  }
-
-  async getRatesByDate(date: string): Promise<RatesInfo> {
-    oerrLogger(`FETCH OER RATES BY DATE ${date}`);
-    this.validateDate(date);
-
-    const entry = await this.dailyRates.getEntry(date);
-
-    if (entry) {
-      return entry;
+      const rates = this.prepareData(response, date);
+      await this.hourlyRates.addEntry(rates);
+      return rates;
+    } catch (error) {
+      oerrLogger('Error updating current rates:');
     }
-
-    const response = await this.OERApiClient.fetchDateRate(date);
-    const ratesDate = getResponseFormattedDate(date);
-
-    const rates = this.prepareData(response, ratesDate);
-
-    await this.dailyRates.setEntry(date, rates);
-
-    return rates;
   }
 
-  async updateYesterdayRates(): Promise<RatesInfo> {
+  async getRatesByDate(date: string): Promise<RatesInfo | null> {
+    oerrLogger(`FETCH OER RATES BY DATE ${date}`);
+    try {
+      this.validateDate(date);
+
+      const entry = await this.dailyRates.getEntry(date);
+
+      if (entry) {
+        return entry;
+      }
+
+      const response = await this.OERApiClient.fetchDateRate(date);
+      const ratesDate = getResponseFormattedDate(date);
+
+      const rates = this.prepareData(response, ratesDate);
+
+      await this.dailyRates.setEntry(date, rates);
+
+      return rates;
+    } catch (error) {
+      oerrLogger('Error fetching OER rates by date:');
+      return null;
+    }
+  }
+
+  async updateYesterdayRates(): Promise<RatesInfo | null> {
     const yesterdayDate = getYesterdayDate();
 
-    return this.getRatesByDate(yesterdayDate);
+    return await this.getRatesByDate(yesterdayDate);
   }
 }
 

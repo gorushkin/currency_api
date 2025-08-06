@@ -4,14 +4,18 @@ import cors from '@fastify/cors';
 
 const app = Fastify({ logger: true });
 
-app.register(cors, {});
+void app.register(cors, {});
 
-app.register(routes);
+void app.register(routes);
+
+app.setErrorHandler((_error, _request, reply) => {
+  void reply.status(500).send({ ok: false });
+});
 
 export const appStart = async (port: number) => {
   try {
     app.listen({ port, host: '0.0.0.0' }, (err) => {
-      if (err) throw err;
+      if (err != null) throw err;
       console.log(`Server is running on port ${port}`);
     });
   } catch (err) {
